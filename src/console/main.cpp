@@ -1,6 +1,14 @@
-#include <stdio.h>
+#include <string>
+#include <vector>
 
 int main( int argc, char ** argv )
 {
+	std::vector<std::string> vecParameters;
+	for(int i = 0; i < argc; ++i)
+	{
+		std::string param(argv[i]);
+		vecParameters.push_back(param);
+	}
+
 	return 1;
 }
