@@ -14,5 +14,13 @@ class TeDatabase;
 */
 TC_DLL bool ImportImageToDatabase(TeDatabase* database, const std::string& imgFileName, const std::string& layerName);
 
+/** \brief Imports the given ShapeFile to the given database using the given layerName.
+	\param database The database where the ShapeFile will be imported.
+	\param shapeFileName The ShapeFile that will be imported.
+	\param layerName The name of the layer that will be created to store the imported ShapeFile.
+	\return TRUE in case of success. FALSE otherwise
+*/
+TC_DLL bool ImportShapeToDatabase(TeDatabase* database, const std::string& shapeFileName, const std::string& layerName);
+
 
 #endif //CONVERTER_PERSISTENCE_SERVICE
