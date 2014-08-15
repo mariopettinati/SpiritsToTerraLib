@@ -10,6 +10,10 @@ set ( SRC_DIR "${ROOT}/src" )
 file ( GLOB SRCS ${SRC_DIR}/library/*.cpp )
 file ( GLOB HEADERS ${SRC_DIR}/library/*.h)
 
+find_package ( terralib REQUIRED COMPONENTS shp)
 
-add_definitions(-DTERRALIB_CONVERTER_AS_DLL)
-add_library( ${PROJ_NAME} SHARED ${SRCS} ${HEADERS})
+add_definitions(-DTERRALIB_CONVERTER_AS_DLL )
+add_library( ${PROJ_NAME} SHARED ${SRCS} ${HEADERS} )
+
+include_directories ( ${TE_INCLUDE_DIRS} ${TV_DIRS}} )
+target_link_libraries(${PROJ_NAME} ${TE_LIBRARIES})
