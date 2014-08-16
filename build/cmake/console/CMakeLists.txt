@@ -21,8 +21,6 @@ set ( SRC_DIR "${ROOT}/src" )
 file ( GLOB SRCS ${SRC_DIR}/console/*.cpp )
 file ( GLOB HEADERS ${SRC_DIR}/console/*.h)
 
-
-
 find_package ( TerralibConverterLibrary REQUIRED)
 
 add_executable( ${PROJ_NAME} ${GUI_TYPE} ${SRC_DIR}/console/main.cpp)
