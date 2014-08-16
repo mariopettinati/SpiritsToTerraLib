@@ -3,7 +3,11 @@ cmake_minimum_required(VERSION 2.8)
 set ( PROJ_NAME "TerralibConverterLib" )
 project ( ${PROJ_NAME} )
 
-set ( ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../.." )
+IF( MSVC_IDE AND ( MSVC90 OR MSVC10 ) )
+	add_definitions(/MP)
+ENDIF()
+
+set ( ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../.." )
 set ( SRC_DIR "${ROOT}/src" )
 
 

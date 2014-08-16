@@ -1,19 +1,16 @@
 cmake_minimum_required(VERSION 2.8)
 
-set ( PROJ_NAME "TerralibConverterLib" )
+set ( PROJ_NAME "TerralibConverter" )
 project ( ${PROJ_NAME} )
 
 set ( ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../.." )
 set ( SRC_DIR "${ROOT}/src" )
 
+add_subdirectory ( library )
 
-file ( GLOB SRCS ${SRC_DIR}/library/*.cpp )
-file ( GLOB HEADERS ${SRC_DIR}/library/*.h)
+#Build console application.
+OPTION ( BUILD_CONSOLE_APPLICATION "Build the console application?" ON )
 
-find_package ( terralib REQUIRED COMPONENTS shp)
-
-add_definitions(-DTERRALIB_CONVERTER_AS_DLL )
-add_library( ${PROJ_NAME} SHARED ${SRCS} ${HEADERS} )
-
-include_directories ( ${TE_INCLUDE_DIRS} ${TV_DIRS}} )
-target_link_libraries(${PROJ_NAME} ${TE_LIBRARIES})
+if( BUILD_CONSOLE_APPLICATION )
+	add_subdirectory ( console )
+endif ( BUILD_CONSOLE_APPLICATION )
