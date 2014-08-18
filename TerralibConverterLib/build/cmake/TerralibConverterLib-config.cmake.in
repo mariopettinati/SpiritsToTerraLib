@@ -1,0 +1,15 @@
+# - Config file for the Terralib Converter Lib package
+# It defines the following variables
+#  CONVERTER_LIBRARY_INCLUDE_DIRS - include directories for Library
+#  CONVERTER_LIBRARY_LIBRARIES    - libraries to link against
+#  CONVERTER_LIBRARY_BINARIES 	   - binaries of terralib dependencies
+
+# Compute paths
+get_filename_component(CONVERTER_LIBRARY_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+if(EXISTS "${CONVERTER_LIBRARY_CMAKE_DIR}/CMakeCache.txt")
+   # In build tree
+   include("${TERRALIB_CMAKE_DIR}/TerralibConverterLibBuildTreeSettings.cmake")
+endif()
+ 
+# Our library dependencies (contains definitions for IMPORTED targets)
+#include("${TERRALIB_CMAKE_DIR}/teLibraryDepends.cmake")
