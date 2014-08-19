@@ -14,16 +14,18 @@ IF( MSVC_IDE AND ( MSVC90 OR MSVC10 ) )
 	add_definitions(/MP)
 ENDIF()
 
-set ( ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../.." )
+set ( ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../.." )
 set ( SRC_DIR "${ROOT}/src" )
 
 
-file ( GLOB SRCS ${SRC_DIR}/console/*.cpp )
-file ( GLOB HEADERS ${SRC_DIR}/console/*.h)
+file ( GLOB SRCS ${SRC_DIR}/*.cpp )
+file ( GLOB HEADERS ${SRC_DIR}/*.h)
 
-find_package ( TerralibConverterLibrary REQUIRED)
+find_package ( TerralibConverterLib REQUIRED)
 
-add_executable( ${PROJ_NAME} ${GUI_TYPE} ${SRC_DIR}/console/main.cpp)
+include_directories ( ${CONVERTER_LIBRARY_INCLUDE_DIRS} )
+add_executable( ${PROJ_NAME} ${GUI_TYPE} ${SRC_DIR}/main.cpp)
+target_link_libraries(${PROJ_NAME} ${CONVERTER_LIBRARY_BINARIES} )
 
 #include_directories ( ${TE_INCLUDE_DIRS} ${TV_DIRS}} )
 #target_link_libraries(${PROJ_NAME} ${TE_LIBRARIES})

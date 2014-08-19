@@ -1,6 +1,7 @@
 #include "PersistenceService.h"
 
 #include <TeDatabase.h>
+#include <TeLayer.h>
 #include <TeImportRaster.h>
 #include <TeImportExport.h>
 
@@ -60,8 +61,8 @@ bool ImportShapeToDatabase(TeDatabase* database, const std::string& shapeFileNam
 		return false;
 	}
 
-	bool result = TeImportShape(shapeFileName, database, layerName);
-	if(result == false)
+	TeLayer* layer = TeImportShape(shapeFileName, database, layerName);
+	if(layer == 0)
 	{
 		return false;
 	}

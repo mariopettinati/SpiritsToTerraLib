@@ -1,6 +1,8 @@
 #include <string>
 #include <vector>
 
+#include <PersistenceService.h>
+
 int main( int argc, char ** argv )
 {
 	std::vector<std::string> vecParameters;

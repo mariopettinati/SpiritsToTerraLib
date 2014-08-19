@@ -8,7 +8,7 @@
 get_filename_component(CONVERTER_LIBRARY_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 if(EXISTS "${CONVERTER_LIBRARY_CMAKE_DIR}/CMakeCache.txt")
    # In build tree
-   include("${TERRALIB_CMAKE_DIR}/TerralibConverterLibBuildTreeSettings.cmake")
+   include("${CONVERTER_LIBRARY_CMAKE_DIR}/TerralibConverterLibBuildTreeSettings.cmake")
 endif()
  
 # Our library dependencies (contains definitions for IMPORTED targets)
