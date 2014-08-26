@@ -12,5 +12,10 @@ int main( int argc, char ** argv )
 		vecParameters.push_back(param);
 	}
 
+	std::string shapeFileName = "D:/mario/devel/Data/Shapes/Agricab/regions.shp";
+
+	TeDatabase* database = CreateDatabase();
+	ImportShapeToDatabase(database, shapeFileName, "shape_test");
+
 	return 1;
 }

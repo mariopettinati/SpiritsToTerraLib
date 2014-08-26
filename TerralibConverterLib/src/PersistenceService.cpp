@@ -1,9 +1,52 @@
 #include "PersistenceService.h"
 
 #include <TeDatabase.h>
+#include <TeDBConnectionsPool.h>
+#include <TeDatabaseFactory.h>
 #include <TeLayer.h>
 #include <TeImportRaster.h>
 #include <TeImportExport.h>
+
+TeDatabase* CreateConnection()
+{
+	TeDatabaseFactoryParams params;
+	params.dbms_name_ = "PostGIS";
+	params.host_ = "localhost";
+	params.user_ = "postgres";
+	params.password_ = "postgres";
+	params.database_ = "test";
+	params.port_ = 5432;
+
+	TeDatabase* database = TeDBConnectionsPool::instance().getDatabase(params.dbms_name_, params.database_, params.host_, params.user_, params.password_, params.port_);
+
+	return database;
+}
+
+TeDatabase* CreateDatabase()
+{
+	TeDatabaseFactoryParams params;
+	params.dbms_name_ = "PostGIS";
+
+	TeDatabase* database = TeDatabaseFactory::make(params);
+	if(database == 0)
+	{
+		return 0;
+	}
+
+	params.host_ = "localhost";
+	params.user_ = "postgres";
+	params.password_ = "postgres";
+	params.database_ = "test";
+	params.port_ = 5432;
+
+	if(database->newDatabase(params.database_, params.user_, params.password_, params.host_, params.port_) == false)
+	{
+		delete database;
+		return 0;
+	}
+
+	return database;
+}
 
 bool ImportImageToDatabase(TeDatabase* database, const std::string& imgFileName, const std::string& layerName)
 {

@@ -6,6 +6,10 @@
 
 class TeDatabase;
 
+TC_DLL TeDatabase* CreateConnection();
+
+TC_DLL TeDatabase* CreateDatabase();
+
 /** \brief Imports the given image to the given database using the given layerName.
 	\param database The database where the image will be imported.
 	\param imgFileName The image that will be imported.
