@@ -7,7 +7,7 @@
 #include <TeImportRaster.h>
 #include <TeImportExport.h>
 
-TeDatabase* CreateConnection()
+TeDatabase* OpenConnection()
 {
 	TeDatabaseFactoryParams params;
 	params.dbms_name_ = "PostGIS";
@@ -48,6 +48,15 @@ TeDatabase* CreateDatabase()
 	return database;
 }
 
+void CloseConnection(TeDatabase* database)
+{
+	if(database != 0)
+	{
+		database->close();
+		delete database;
+	}
+}
+
 bool ImportImageToDatabase(TeDatabase* database, const std::string& imgFileName, const std::string& layerName)
 {
 	if(database == 0)
@@ -79,6 +88,7 @@ bool ImportImageToDatabase(TeDatabase* database, const std::string& imgFileName,
 	bool result = TeImportRaster(layer, rasterIn);
 	if(result == false)
 	{
+		database->deleteLayer(layer->id());
 		return false;
 	}
 

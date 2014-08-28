@@ -13,9 +13,14 @@ int main( int argc, char ** argv )
 	}
 
 	std::string shapeFileName = "D:/mario/devel/Data/Shapes/Agricab/regions.shp";
+	//std::string imageFileName = "D:/mario/devel/Data/Images/Agricab/regions.img";
+	std::string imageFileName = "D:/mario/devel/Data/Images/Agricab/GLC_5classes.img";
 
-	TeDatabase* database = CreateDatabase();
-	ImportShapeToDatabase(database, shapeFileName, "shape_test");
+	TeDatabase* database = OpenConnection();
+	//ImportShapeToDatabase(database, shapeFileName, "shape_test");
+	ImportImageToDatabase(database, imageFileName, "image_test");
+
+	CloseConnection(database);
 
 	return 1;
 }

@@ -6,9 +6,14 @@
 
 class TeDatabase;
 
-TC_DLL TeDatabase* CreateConnection();
+/** \brief Opens a connection to the database.
+	\return Returns a valid connected database in case of success. Otherwise returns NULL
+*/
+TC_DLL TeDatabase* OpenConnection();
 
 TC_DLL TeDatabase* CreateDatabase();
+
+TC_DLL void CloseConnection(TeDatabase* database);
 
 /** \brief Imports the given image to the given database using the given layerName.
 	\param database The database where the image will be imported.
