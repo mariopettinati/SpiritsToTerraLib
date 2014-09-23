@@ -6,6 +6,7 @@
 #include <TeLayer.h>
 #include <TeImportRaster.h>
 #include <TeImportExport.h>
+#include <TeAsciiFile.h>
 
 TeDatabase* OpenConnection()
 {
@@ -120,4 +121,202 @@ bool ImportShapeToDatabase(TeDatabase* database, const std::string& shapeFileNam
 		return false;
 	}
 	return true;
+}
+
+bool ImportCSVToDatabase(TeDatabase* database, const std::string& csvFileName, const std::string& tableName)
+{
+	if(database == 0)
+	{
+		return false;
+	}
+	if(database->isConnected() == false)
+	{
+		return false;
+	}
+	if(csvFileName.empty() == true)
+	{
+		return false;
+	}
+	if(tableName.empty() == true)
+	{
+		return false;
+	}
+
+	bool firstLineIsHeader = true;
+
+	TeAsciiFile csvFile(csvFileName);
+
+	// try to guess the separator
+	std::string firstLine = csvFile.readLine();
+
+	std::string separator;
+	if (firstLine.find(',') != -1)
+	{
+		separator = ",";
+	}
+	else if(firstLine.find(';') != -1)
+	{
+		separator = ";";
+	}
+	else if(firstLine.find(' ') != -1)
+	{
+		separator = " ";
+	}
+	else if(firstLine.find('\t') != -1)
+	{
+		separator = "\t";
+	}
+	else
+	{
+		return false;
+	}
+	char cSeparator = separator[0];
+	
+	std::vector<string> vecNames;
+	TeTrim(firstLine);
+	TeSplitString(firstLine, separator, vecNames);
+
+	TeAttributeList attrList;
+	for(unsigned int i = 0; i < vecNames.size(); ++i)
+	{
+		std::string colName;
+		if (firstLineIsHeader == true)  //first line is a header
+			colName = vecNames[i];
+		else
+			colName  = "Col" + Te2String(i);
+		TeAttribute at;
+		at.rep_.name_= colName;
+		at.rep_.type_ = TeSTRING;
+		at.rep_.numChar_ = 255;
+		attrList.push_back(at);
+	}
+
+	TeTable table(tableName);
+	table.setAttributeList(attrList);
+
+	bool result = TeImportCSVFile(csvFileName, table, database, 0, cSeparator, firstLineIsHeader);
+
+	return result;
+}
+
+TeAttributeList GetRUMAttributeList()
+{
+	TeAttributeList attrList;
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "region_id";
+		at.rep_.type_ = TeINT;
+		attrList.push_back(at);
+	}
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "class_id";
+		at.rep_.type_ = TeINT;
+		attrList.push_back(at);
+	}
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "unmixing_method";
+		at.rep_.type_ = TeINT;
+		attrList.push_back(at);
+	}
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "threshold";
+		at.rep_.type_ = TeINT;
+		attrList.push_back(at);
+	}
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "sensor_id";
+		at.rep_.type_ = TeINT;
+		attrList.push_back(at);
+	}
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "variable_id";
+		at.rep_.type_ = TeINT;
+		attrList.push_back(at);
+	}
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "periodicity";
+		at.rep_.type_ = TeINT;
+		attrList.push_back(at);
+	}
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "date";
+		at.rep_.type_ = TeDATETIME;
+		at.dateSeparator_ = "";
+		at.dateTimeFormat_ = "YYYYMMDD";
+		attrList.push_back(at);
+	}
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "ra1";
+		at.rep_.type_ = TeREAL;
+		attrList.push_back(at);
+	}
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "ra2";
+		at.rep_.type_ = TeREAL;
+		attrList.push_back(at);
+	}
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "mean";
+		at.rep_.type_ = TeREAL;
+		attrList.push_back(at);
+	}
+
+	{
+		TeAttribute at;
+		at.rep_.name_= "standard_deviation";
+		at.rep_.type_ = TeREAL;
+		attrList.push_back(at);
+	}
+
+	return attrList;
+}
+
+bool ImportRUMToDatabase(TeDatabase* database, const std::string& rumFileName, const std::string& tableName)
+{
+	if(database == 0)
+	{
+		return false;
+	}
+	if(database->isConnected() == false)
+	{
+		return false;
+	}
+	if(rumFileName.empty() == true)
+	{
+		return false;
+	}
+	if(tableName.empty() == true)
+	{
+		return false;
+	}
+
+	TeAttributeList attrList = GetRUMAttributeList();
+
+	TeTable table(tableName);
+	table.setAttributeList(attrList);
+
+	bool result = TeImportCSVFile(rumFileName, table, database, 0, ',', false);
+
+	return result;
 }

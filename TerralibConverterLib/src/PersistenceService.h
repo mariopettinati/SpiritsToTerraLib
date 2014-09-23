@@ -31,5 +31,20 @@ TC_DLL bool ImportImageToDatabase(TeDatabase* database, const std::string& imgFi
 */
 TC_DLL bool ImportShapeToDatabase(TeDatabase* database, const std::string& shapeFileName, const std::string& layerName);
 
+/** \brief Imports the given CSV file to the given database using the given table.
+	\param database The database where the CSV file will be imported.
+	\param tableFileName The CSV file that will be imported.
+	\param tableName The name of the table that will be created to store the imported CSV file.
+	\return TRUE in case of success. FALSE otherwise
+*/
+TC_DLL bool ImportCSVToDatabase(TeDatabase* database, const std::string& csvFileName, const std::string& tableName);
+
+/** \brief Imports the given RUM CSV file to the given database using the given table.
+	\param database The database where the RUM CSV file will be imported.
+	\param tableFileName The RUM CSV file that will be imported.
+	\param tableName The name of the table that will be created to store the imported RUM CSV file.
+	\return TRUE in case of success. FALSE otherwise
+*/
+TC_DLL bool ImportRUMToDatabase(TeDatabase* database, const std::string& rumFileName, const std::string& tableName);
 
 #endif //CONVERTER_PERSISTENCE_SERVICE
