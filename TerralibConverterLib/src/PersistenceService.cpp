@@ -8,8 +8,46 @@
 #include <TeImportExport.h>
 #include <TeAsciiFile.h>
 
+std::vector<std::string> SplitInputParameters(int argc, char** argv)
+{
+	std::string params;
+	for(int i = 1; i < argc; ++i)
+	{
+		params += argv[i]; 
+	}
+
+	//here we split the string using the separator: --
+	std::vector<std::string> vecParams; 
+	TeSplitString(params, "--", vecParams);
+
+	//here we trim each parameter
+	for(unsigned int i = 0; i < vecParams.size(); ++i)
+	{
+		std::string param = vecParams[i];
+		TeTrim(param);
+		vecParams[i] = param;
+	}
+
+	//we split again into the pair key/value
+	for(unsigned int i = 0; i < vecParams.size(); ++i)
+	{
+		std::string param = vecParams[i];
+		std::size_t index = param.find(' ');
+		if(index > 0)
+		{
+			std::string key = param.substr(0, index);
+			std::string value = param.substr(index + 1, param.size() - index);
+		}
+	}
+
+	return vecParams;
+}
+
 TeDatabase* OpenConnection()
 {
+	//TeSetEnv("GDAL_DATA", "D:/mario/devel/Sources/dependencies/install/common/data");
+	TeInitializeTerralib("D:/mario/devel/Sources/dependencies/install/common/");
+
 	TeDatabaseFactoryParams params;
 	params.dbms_name_ = "PostGIS";
 	params.host_ = "localhost";
@@ -315,6 +353,8 @@ bool ImportRUMToDatabase(TeDatabase* database, const std::string& rumFileName, c
 
 	TeTable table(tableName);
 	table.setAttributeList(attrList);
+	table.setUniqueName("region_id");
+	table.setLinkName("region_id");
 
 	bool result = TeImportCSVFile(rumFileName, table, database, 0, ',', false);
 

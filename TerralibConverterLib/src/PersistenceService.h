@@ -2,9 +2,12 @@
 #define CONVERTER_PERSISTENCE_SERVICE
 
 #include <string>
+#include <vector>
 #include "TerraLibConverterDefines.h"
 
 class TeDatabase;
+
+TC_DLL std::vector<std::string> SplitInputParameters(int argc, char** argv);
 
 /** \brief Opens a connection to the database.
 	\return Returns a valid connected database in case of success. Otherwise returns NULL
