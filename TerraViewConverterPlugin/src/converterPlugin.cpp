@@ -1,14 +1,19 @@
+#include <converterPlugin.h>
+
 #include <TeQtGrid.h>
 #include <terraViewBase.h>
 #include <TeQtViewsListView.h>
 
-#include <converterPlugin.h>
+#include "import.h"
+#include "rasterImportWizard.h"
+#include "importRUMFilesWindow.h"
 
 // Qt
 #include <qaction.h>
 #include <qmenubar.h>
 #include <qobjectlist.h>
 #include <qpopupmenu.h>
+#include <qmessagebox.h>
 
 converterPlugin::converterPlugin(PluginParameters* params):
 QObject(),
@@ -16,8 +21,8 @@ TViewAbstractPlugin(params)
 {
 	loadTranslationFiles("TerraViewPS_");
 
-	pluginSignalReceiver_.setHostObj(this, pluginSignalHandler);
-	pluginSignalReceiver_.connect(*(params_->signal_emitter_));
+	m_pluginSignalReceiver.setHostObj(this, pluginSignalHandler);
+	m_pluginSignalReceiver.connect(*(params_->signal_emitter_));
 }
 
 converterPlugin::~converterPlugin()
@@ -29,23 +34,31 @@ void converterPlugin::init()
 {  
 	// Gets TerraView Main Window...
     TerraViewBase* terraView = getMainWindow();
-	/*try
+	m_basePopupMenu = getPluginsMenu("TerraViewPlugins.AGRICAB");
+	try
 	{
-		if(terraView)
+		if(terraView != 0 && m_basePopupMenu != 0)
 		{
-			showWinAction_ = new QAction(0, "ShowWinAction", false);
-			showWinAction_->setMenuText(tr("Add File Theme"));
-			showWinAction_->setText( tr("File Theme") );
-			showWinAction_->setToolTip( tr("File Theme") );
-			//showWinAction_->setIconSet( QIconSet( QPixmap(fileTheme_xpm)));
+			QAction* showImportRasterWindow = createAction(m_basePopupMenu, tr("Import Raster"), false);
+			connect(showImportRasterWindow, SIGNAL(activated()), this, SLOT(showImportRasterWindow()));
+			showImportRasterWindow->addTo(m_basePopupMenu);
 
-			QPopupMenu* mnu = getPluginsMenu(tr("TerraViewPlugins.Themes").latin1());
+			QAction* showImportVectorWindow = createAction(m_basePopupMenu, tr("Import Vector"), false);
+			connect(showImportVectorWindow, SIGNAL(activated()), this, SLOT(showImportVectorWindow()));
+			showImportVectorWindow->addTo(m_basePopupMenu);
 
-			if(mnu != 0)
-			{
-				if(!showWinAction_->addTo(mnu))
-					throw;
-			}
+
+			QAction* showImportRUMFilesWindow = createAction(m_basePopupMenu, tr("Import RUM Files"), false);
+			connect(showImportRUMFilesWindow, SIGNAL(activated()), this, SLOT(showImportRUMFilesWindow()));
+			showImportRUMFilesWindow->addTo(m_basePopupMenu);
+
+			QAction* showImportRUMDatabaseWindow = createAction(m_basePopupMenu, tr("Import RUM Database"), false);
+			connect(showImportRUMDatabaseWindow, SIGNAL(activated()), this, SLOT(showImportRUMDatabaseWindow()));
+			showImportRUMDatabaseWindow->addTo(m_basePopupMenu);
+
+			
+
+			/*
 
 			QPtrList< QToolBar > tv_tool_bars_list = tview->toolBars( Qt::DockTop );
 
@@ -53,15 +66,16 @@ void converterPlugin::init()
 				showWinAction_->addTo(tview->toolBars(Qt::DockTop).at(0));
 
 			connect(showWinAction_, SIGNAL(activated()), this, SLOT(showWindow()));
+			*/
 		}
 	}
 	catch(...)
 	{
-		QMessageBox::critical(tview, tr("TerraView plug-in error"), tr("Can't create plug-in menu."));
+		QMessageBox::critical(terraView, tr("TerraView plug-in error"), tr("Can't create plug-in menu."));
 
-		delete showWinAction_;
-		showWinAction_ = 0;
-	}*/
+		delete m_basePopupMenu;
+		m_basePopupMenu = 0;
+	}
 
     // Database
 	connect(terraView, SIGNAL(checkWidgetEnablingSignal()), this, SLOT(checkWidgetEnabling()));
@@ -71,6 +85,13 @@ void converterPlugin::init()
 
 void converterPlugin::end()
 {
+	for(size_t i = 0; i < m_vecActions.size(); ++i)
+	{
+		delete m_vecActions[i];
+	}
+
+	m_vecActions.clear();
+
 	// Gets TerraView Main Window...
     TerraViewBase* tv = getMainWindow();
 	if(tv != 0)
@@ -91,6 +112,17 @@ void converterPlugin::signalHandler( const PluginsSignal& x)
 
 void converterPlugin::checkWidgetEnabling()
 {
+	TeDatabase* database = params_->getCurrentDatabasePtr();
+	if(database != 0)
+	{
+		m_basePopupMenu->setEnabled(true);
+	}
+	else
+	{
+		m_basePopupMenu->setEnabled(true);
+	}
+	
+
 	/*_dbMenu->setEnabled(false);
     _dbToolBar->setEnabled(false);
 	_viewMenu->setEnabled(false);
@@ -126,4 +158,51 @@ void converterPlugin::checkWidgetEnabling()
 		_layerToolBar->setEnabled(true);
 	}
 	*/
+}
+
+QAction* converterPlugin::createAction(QObject* parent, const QString& text, bool toggle)
+{
+	QAction* action = new QAction(parent, "", toggle);
+	action->setMenuText(text);
+	action->setText(text);
+	action->setToolTip(text);
+
+	m_vecActions.push_back(action);
+
+	return action;
+}
+
+void converterPlugin::showImportRasterWindow()
+{
+	TerraViewBase* terraView = getMainWindow();
+
+	RasterImportWizard dialog(terraView, "", 0);
+	if(dialog.exec() == QDialog::Accepted)
+	{
+		params_->updateTVInterface();
+	}
+}
+void converterPlugin::showImportVectorWindow()
+{
+	TerraViewBase* terraView = getMainWindow();
+
+	ImportWindow dialog(terraView, "", 0);
+	if(dialog.exec() == QDialog::Accepted)
+	{
+		params_->updateTVInterface();
+	}
+}
+void converterPlugin::showImportRUMFilesWindow()
+{
+	TerraViewBase* terraView = getMainWindow();
+
+	ImportRUMFilesWindow dialog(terraView, "", 0);
+	if(dialog.exec() == QDialog::Accepted)
+	{
+		params_->updateTVInterface();
+	}
+}
+
+void converterPlugin::showImportRUMDatabaseWindow()
+{
 }
